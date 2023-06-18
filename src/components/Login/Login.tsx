@@ -1,17 +1,12 @@
-import { Link } from 'react-router-dom';
-import React from 'react';
-
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import React, { useContext } from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
-import axios from 'axios';
 import * as Yup from 'yup';
+import { UserRequest } from '../../types/UserRequest';
+import { AuthContext } from '../AuthContext';
 
 
-  interface RegistrationFormValues {
-    password: string;
-    username: string;
-  }
-  
-const initialValues: RegistrationFormValues = {
+const initialValues: UserRequest = {
   password: '',
   username: '',
 };
@@ -24,14 +19,35 @@ const validationSchema = Yup.object({
 });
 
 export const Login = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { login, error } = useContext(AuthContext);
 
-  const handleSubmit = async (userData: RegistrationFormValues) => {
+  const handleSubmit = async (userData: UserRequest) => {
+    // return login(userData)
+    //   .then(() => {
+    //     navigate(location.state?.from?.pathname || '/');
+    //   });
+
+
+    // .catch(error => {
+    //   setError(error.response?.data?.message);
+    // });
     try {
-      const response = await axios.post('https://expa.fly.dev/auth/login', userData);
-      console.log(response);
-    } catch (error) {
+      await login(userData);
+      // console.log(response);
+      navigate(location.state?.from?.pathname || '/');
+    } catch (err) {
       console.log(error);
+      console.log(err);
     }
+
+    // try {
+    //   const response = await axios.post('https://expa.fly.dev/auth/login', userData);
+    //   console.log(response);
+    // } catch (error) {
+    //   console.log(error);
+    // }
   };
   return (
     <>
@@ -55,7 +71,7 @@ export const Login = () => {
             <ErrorMessage name="username" component="div" />
           </div>
 
-          <button type="submit">Register</button>
+          <button type="submit">Log in</button>
         </Form>
       </Formik>
 

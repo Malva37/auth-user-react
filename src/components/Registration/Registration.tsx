@@ -1,50 +1,45 @@
-import axios from 'axios';
+
 import { Formik, Form, Field, ErrorMessage } from 'formik';
-import React from 'react';
-import { Link } from 'react-router-dom';
-
+import React, { useContext } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import * as Yup from 'yup';
-// interface User {
-//   id: number
-//   username: string
-//   displayName: string
-//   admin: boolean
-// }
+import { UserRegister } from '../../types/UserRegister';
+import { AuthContext } from '../AuthContext';
 
-// interface UserRequest {
-//   username: string
-//   displayName: string
-//   password: string
-// }
 const validationSchema = Yup.object({
   password: Yup.string()
     .required('Password is required')
-    .min(6, 'Password must be at least 6 characters long'),
+    .min(8, 'Password must be at least 8 characters long'),
   username: Yup.string().required('Username is required'),
   displayName: Yup.string().required('Display Name is required'),
 });
 
-export const Registration: React.FC = () => {
-  interface RegistrationFormValues {
-    password: string
-    username: string
-    displayName: string
-  }
+const initialValues: UserRegister = {
+  password: '',
+  username: '',
+  displayName: ''
+};
 
-  const initialValues: RegistrationFormValues = {
-    password: '',
-    username: '',
-    displayName: ''
+export const Registration = () => {
+  const navigate = useNavigate();
+  // const location = useLocation();
+  const { register } = useContext(AuthContext);
+
+  const handleSubmit = async (userData: UserRegister) => {
+    return register(userData)
+      .then(() => {
+        navigate('/login');
+      });
   };
 
-  const handleSubmit = async (userData: RegistrationFormValues) => {
-    try {
-      const response = await axios.post('https://expa.fly.dev/auth/register', userData);
-      console.log(response);
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  // const handleSubmit = async (userData: RegistrationFormValues) => {
+  //   try {
+  //     const response = await axios.post('https://expa.fly.dev/auth/register', userData);
+  //     console.log(response);
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
 
   return (
     <>
